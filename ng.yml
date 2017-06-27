@@ -1,0 +1,84 @@
+version: '3'
+services:
+  http:
+    labels:
+      com.example.description: "This label will appear on all containers for the web service"
+    image: devel:5000/nginx:1.10.2
+    hostname: nginx_http
+    #depends_on:
+    #  - php-fpm
+
+    environment:
+      #php_server: 127.0.0.1
+      php_server: php5.4
+      port: 9004
+    #env_file: env
+    #env_file:
+    #  - /opt/secrets.env
+    #  - ./common.env
+
+    ports:
+      - 80:80
+
+    networks:
+      #ingress:
+      #  aliases:
+      #    - nginx
+          #- http
+      9znet:
+        aliases:
+          - http
+
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 20000
+        hard: 40000
+    extra_hosts:
+      - "yum.9z.cn:192.168.1.248" 
+
+    #logging:
+    #  driver: syslog
+    #  options:
+    #    syslog-address: "tcp://192.168.1.151:123"
+ 
+    volumes:
+      - data:/opt/www
+    deploy:
+      placement:
+        #constraints: [node.role == work]
+        constraints: [node.hostname == test-248]
+      labels:
+        com.example.description: "This label will appear on the web service"
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 5s
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 60s
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 128M
+        reservations:
+          cpus: '0.05'
+          memory: 64M
+
+volumes:
+  data:
+    external:
+      name: data
+
+networks:  
+  #ingress:
+  #  external: true
+
+  9znet:
+    external: true
+    #ipam:
+    #  config:
+    #    - subnet: 172.16.1.0/24
+          #gateway: 172.16.1.1
