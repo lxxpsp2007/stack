@@ -73,9 +73,7 @@ volumes:
       name: data
 
 networks:  
-  #ingress:
-  #  external: true
-
+  #host:
   9znet:
     external: true
     #ipam:
