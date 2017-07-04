@@ -22,6 +22,7 @@ services:
       labels:
         com.example.description: "This label will appear on the web service"
       replicas: 2
+      mode: replicated
       update_config:
         parallelism: 1
         delay: 5s

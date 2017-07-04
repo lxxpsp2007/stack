@@ -1,4 +1,4 @@
-version: '3'
+version: '3.1'
 services:
   http:
     labels:
@@ -44,6 +44,11 @@ services:
  
     volumes:
       - data:/opt/www
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "tcp://192.168.1.151:514"
+
     deploy:
       placement:
         #constraints: [node.role == work]
