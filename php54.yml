@@ -1,0 +1,63 @@
+version: '3'
+services:
+  php54:
+    image: c6php:5.4.25
+    hostname: php54
+
+    #environment:
+    #  php_server: 127.0.0.1
+    #  port: 9004
+    #env_file: env
+    #env_file:
+    #  - /opt/secrets.env
+    #  - ./common.env
+
+    command: bash /run.sh
+    volumes:
+      - /usr/local/php-5.4.25/etc/:/usr/local/php-5.4.25/etc/
+      - /usr/local/php-5.4.25/no-debug-non-zts-20100525/:/usr/local/php-5.4.25/lib/php/extensions/no-debug-non-zts-20100525/
+      - ./hosts:/etc/hosts
+
+    ports:
+      - 9004:9004
+    #volumes:
+    #  - data: /opt/www
+    networks:
+      9znet:
+        aliases:
+          - php54
+
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 20000
+        hard: 40000
+
+    deploy:
+      placement:
+        constraints: [node.hostname == app2]
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 5s
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 30s
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+        
+#volumes:
+#  data:
+#    external:
+#      name: data
+
+networks:  
+  9znet:
+    external: true
